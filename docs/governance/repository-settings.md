@@ -1,8 +1,9 @@
 # GitHub organization and repository settings
 
-These are **recommendations** for the project owner. An AI agent has not
-applied any of them, because changing organization and repository settings
-requires owner approval. Settings marked "observed" were read from the GitHub
+These are **recommendations** for the project owner. Changing organization and
+repository settings requires owner approval. With that approval, an AI agent
+created the repository and made it public on 2026-10-23. It has applied none of
+the other settings below. Settings marked "observed" were read from the GitHub
 API on 2026-10-23 (see the [P0 evidence log](p0-verification.md)).
 
 ## Plan constraint: public or private
@@ -14,10 +15,12 @@ plan:
 - Private vulnerability reporting is available only on **public** repositories.
 - Secret scanning and push protection are free for **public** repositories.
 
-A private repository is reasonable while P0 is under review. The controls below
-only take effect once the repository is public or the organization moves to a
-paid plan. Register `authlume.org` before going public (see
-[ADR-010](../adr/0010-legal-trademark-and-npm-scope.md)).
+The repository was created private, then made **public** on 2026-10-23 after
+the owner registered `authlume.org`. All the controls below are therefore
+available on the Free plan. They take effect only once they are turned on.
+Observed at 2026-10-23T09:11Z: private vulnerability reporting off; secret
+scanning, push protection and Dependabot security updates disabled; no
+rulesets.
 
 ## Organization settings
 
@@ -33,8 +36,8 @@ paid plan. Register `authlume.org` before going public (see
 | Dependabot security updates for new repositories | Off | On |
 | Secret scanning for new repositories | Off | On |
 | Secret scanning push protection for new repositories | Off | On |
-| Verified domain | None | Verify `authlume.org` once registered |
-| Organization profile (description, URL) | Empty | Add a description and, once registered, the project URL |
+| Verified domain | None | Verify `authlume.org` (registered 2026-10-23) with a DNS TXT record |
+| Organization profile (description, URL) | Empty | Add a description, and the project URL once a site is live |
 | Owners | 1 | Add a second trusted owner when one exists |
 
 ## Repository: `authlume/authlume`
@@ -111,8 +114,9 @@ the issue forms. Also recommended: `needs-triage`, `security`, `adr`,
 
 ## Checklist for the owner
 
-- [ ] Decide repository visibility (public or private) and create
-      `authlume/authlume`, if an agent has not already done so with approval.
+- [x] Create `authlume/authlume` and make it public (done 2026-10-23 with
+      owner authorization).
+- [ ] Verify `authlume.org` on the organization.
 - [ ] Turn on the organization 2FA requirement.
 - [ ] Restrict repository deletion, visibility changes and outside
       collaborator invitations to owners.

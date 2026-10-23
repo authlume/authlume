@@ -36,8 +36,7 @@ If that form is unavailable, open a public issue titled "Request for private
 security contact" **without any vulnerability details**, and a maintainer will
 arrange a private channel.
 
-A dedicated security email address will be added here once the project domain
-is secured.
+A dedicated security email address will be added here once it has been set up.
 
 ### What to include
 

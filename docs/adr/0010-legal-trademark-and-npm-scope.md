@@ -23,7 +23,7 @@ Verified status on 2026-10-23 (details and commands in the
 | --- | --- |
 | GitHub organization `authlume` | Exists; `9jaDevo` is its only member and an active admin. Organization 2FA requirement is off. |
 | npm organization `authlume` (`@authlume` scope) | Exists in the public registry with zero packages. Organization roles and 2FA could not be verified from the agent environment. |
-| Domain `authlume.org` | **Not registered.** The `.org` registry returned "Object not found" and DNS returned NXDOMAIN. |
+| Domain `authlume.org` | Unregistered at the first check. **Registered** on 2026-10-23 at 09:08 UTC through Spaceship, Inc., expiring 2027-10-23. The founder confirmed ownership; registrant details are redacted in RDAP. |
 | Trademark or similarity review | **Not performed.** No evidence of a search or legal opinion exists. |
 | Copyright holder wording | Provisionally "The Authlume Authors" in `NOTICE`. |
 
@@ -48,14 +48,17 @@ complete without that evidence.
 
 ### 2. Domain registration
 
-`authlume.org` is currently unregistered and therefore available to anyone.
-The Blueprint names the domain publicly, so register it before this repository
-is made public if possible. The owner may also consider defensive registrations,
-which is a budget decision. Once the domain is registered:
+Done: the founder registered `authlume.org` on 2026-10-23, before the
+repository was made public. Remaining owner actions:
 
-- Verify it on the GitHub organization (verified-domain badge).
+- Turn on auto-renew. The registration is for one year and expires on
+  2027-10-23. A lapsed domain can be taken over and used to impersonate the
+  project.
+- Verify the domain on the GitHub organization. This adds the verified-domain
+  badge and gives DNS proof of control.
 - Create security and conduct contact addresses and add them to `SECURITY.md`
   and `CODE_OF_CONDUCT.md`.
+- Optionally, register defensive domains. This is a budget decision.
 
 ### 3. npm scope hardening
 
@@ -87,10 +90,10 @@ Pending owner decision.
 
 ## Security consequences
 
-An unregistered domain can be registered by someone else and used for
-phishing that impersonates the project. An npm scope with a single owner and
-no enforced 2FA is a supply-chain risk. Both should be resolved before any
-package is published.
+A lapsed or unverified domain can be taken over and used for phishing that
+impersonates the project. An npm scope with a single owner and no enforced 2FA
+is a supply-chain risk. Both should be resolved before any package is
+published.
 
 ## Migration cost
 
@@ -99,6 +102,7 @@ is why the trademark review should happen before P10.
 
 ## Follow-up
 
-- Owner: register `authlume.org`, run `npm org ls authlume` and confirm 2FA,
-  then commission or perform the trademark review.
+- Owner: turn on auto-renew for `authlume.org` and verify it on the GitHub
+  organization, run `npm org ls authlume` and confirm 2FA, then commission or
+  perform the trademark review.
 - Update the Phase Tracker with evidence for each item.

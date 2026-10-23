@@ -3,7 +3,7 @@
 This log records how each P0 account and reservation item was checked, and
 what the result was. It backs the evidence column of the
 [Phase Tracker](../../AUTHLUME_PHASE_TRACKER.md). An AI agent ran the checks on
-**2026-10-23, between 08:20 and 08:35 UTC**, from a local development machine,
+**2026-10-23, between 08:20 and 09:15 UTC**, from a local development machine,
 using the GitHub CLI authenticated as `9jaDevo` and unauthenticated HTTPS
 requests.
 
@@ -57,9 +57,33 @@ full_name: authlume/authlume   visibility: private   default_branch: main
 created_at: 2026-10-23T08:35:13Z
 ```
 
-On the GitHub Free plan, branch rulesets and private vulnerability reporting
-do not apply to private repositories. See the
-[repository settings](repository-settings.md#plan-constraint-public-or-private).
+After the owner registered `authlume.org`, the owner authorized making the
+repository public:
+
+```text
+$ gh repo edit authlume/authlume --visibility public
+$ gh api repos/authlume/authlume          # 2026-10-23T09:11Z
+visibility: public   private: false   default_branch: main
+
+$ curl https://api.github.com/repos/authlume/authlume     # unauthenticated
+HTTP 200
+
+$ gh api repos/authlume/authlume --jq .security_and_analysis
+secret_scanning, secret_scanning_push_protection, dependabot_security_updates: disabled
+
+$ gh api repos/authlume/authlume/private-vulnerability-reporting
+{"enabled":false}
+```
+
+**Result:** the repository is public. Its security features are not turned on
+yet. See the [repository settings](repository-settings.md#repository-authlumeauthlume).
+
+```text
+$ gh api "repos/authlume/authlume/codeowners/errors?ref=chore/p0-governance"
+{"errors":[]}
+```
+
+**Result:** GitHub reports no syntax or permission errors in `CODEOWNERS`.
 
 ## 3. npm organization `authlume` and scope `@authlume`
 
@@ -113,8 +137,27 @@ $ nslookup authlume.org
 Non-existent domain (NXDOMAIN)
 ```
 
-**Result:** `authlume.org` is **not registered**, so the founder does not own
-it. Requirement status: pending founder registration.
+**Result at first check:** `authlume.org` was **not registered**.
+
+The founder then reported registering the domain. Re-check at 2026-10-23T09:10Z:
+
+```text
+$ curl https://rdap.publicinterestregistry.org/rdap/domain/authlume.org
+HTTP 200
+ldhName: authlume.org
+status: client transfer prohibited, add period
+registration: 2026-10-23T09:08:53Z   expiration: 2027-10-23T09:08:53Z
+registrar: Spaceship, Inc.
+nameservers: launch1.spaceship.net, launch2.spaceship.net
+registrant: redacted
+
+$ nslookup -type=SOA authlume.org 8.8.8.8
+Non-existent domain                        # DNS not yet propagated at time of check
+```
+
+**Result:** `authlume.org` is registered. RDAP does not show the registrant, so
+ownership rests on the founder's written confirmation (2026-10-23). Verifying
+the domain on the GitHub organization will add DNS proof of control.
 
 ## 5. Legal and trademark review
 
