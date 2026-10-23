@@ -268,7 +268,7 @@ These hold for every flow. They restate Blueprint section 5 in testable form.
 | TC-XC-07 | XC-T07 | Lint bans `Math.random` in packages. The random module draws on the CSPRNG. | P2 |
 | TC-XC-08 | XC-T10 | Each state change produces exactly one audit event. A failed transaction produces none. | P3 |
 | TC-XC-09 | XC-T11 | Injected internal errors return taxonomy errors without stack traces or internal identifiers. | P3 |
-| TC-XC-10 | XC-T12 | With the application clock skewed by plus or minus 10 minutes, expired items are still rejected and valid ones accepted. | P3 |
+| TC-XC-10 | XC-T12 | With the application clock skewed by plus or minus 10 minutes, expired items are still rejected and valid ones accepted. A transaction or row-lock wait spanning expiry does not extend validity; expiry is rechecked using actual database time before the protected change. | P3 |
 
 ## Unsafe designs flagged
 

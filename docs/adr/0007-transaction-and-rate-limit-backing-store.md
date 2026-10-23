@@ -98,20 +98,33 @@ Fail **closed**: if the counter statement fails, the attempt is refused with a
 retryable error. With Option A, an unavailable store means authentication is
 unavailable anyway.
 
+Counter consumption commits before credential verification, in a separate
+short transaction or autocommit statement. A rejected credential, application
+exception or rollback of the authentication transaction must not refund the
+attempt. This also applies to failed access-code attempts in ADR-012.
+TC-PWD-03 must include repeated invalid credentials and injected failures
+after counter consumption on two instances; the shared budget must still be
+exhausted.
+
 ### Transaction semantics, for all stores and all single-use operations
 
 - Single-use consumption is one conditional statement. For example:
 
   ```sql
-  UPDATE ... SET consumed_at = now()
-  WHERE id = $1 AND consumed_at IS NULL AND expires_at > now()
+  UPDATE ... SET consumed_at = clock_timestamp()
+  WHERE id = $1 AND consumed_at IS NULL AND expires_at > clock_timestamp()
   RETURNING ...
   ```
 
   A row count of 0 means failure. Never `SELECT` and then `UPDATE`.
 - Uniqueness, such as normalized email, credential ID and token hash, is enforced by unique constraints. Constraint violations map to generic errors.
 - `READ COMMITTED` is enough for these patterns. Multi-step changes (for example resetting the password, revoking sessions and consuming the token) run in one transaction.
-- Time comparisons use the database's `now()` (INV-11).
+- Expiry comparisons use the database's `clock_timestamp()` (INV-11), not
+  transaction-start `now()`. Recheck expiry after waiting for locks and before
+  the protected state change, within a bounded transaction. PostgreSQL's
+  [time-function semantics](https://www.postgresql.org/docs/current/functions-datetime.html#FUNCTIONS-DATETIME-CURRENT)
+  distinguish actual time from transaction-start time. TC-XC-10 must also hold
+  a transaction or row lock across expiry and require rejection.
 
 ### Cleanup
 

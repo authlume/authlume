@@ -65,7 +65,7 @@ These extend the Blueprint model. Final schema design is in P3.
 | --- | --- |
 | `id` | A random public handle, used as the transaction ID |
 | `purpose` | An enum: `webauthn_registration`, `webauthn_authentication`, `email_verification`, `password_reset`, `email_recovery`, `access_code`, `reauthentication` |
-| `user_id` | Nullable. Null only for usernameless WebAuthn authentication |
+| `user_id` | Nullable for usernameless WebAuthn authentication and an access-code transaction initiated before account identification; bind it before granting account access |
 | `verifier` | The hash of the secret value, or a keyed verifier for low-entropy codes (ADR-006) |
 | `context_hash` | The hash of a random browser-context secret held in a short-lived `__Host-` cookie, for ceremonies that must finish in the browser that started them |
 | `bound_value_hash` | The hash of the value the challenge is about, for example the email address being verified, so that changing the address invalidates the token |
@@ -93,31 +93,58 @@ These extend the Blueprint model. Final schema design is in P3.
 
 ### Consumption
 
-**Challenges and tokens: consume first, then verify.**
+**Email tokens: consume atomically with the dependent change.**
 
 ```sql
 UPDATE one_time_challenges
-SET consumed_at = now()
-WHERE verifier = $1 AND purpose = $2 AND consumed_at IS NULL AND expires_at > now()
+SET consumed_at = clock_timestamp()
+WHERE verifier = $1 AND purpose = $2 AND consumed_at IS NULL
+  AND expires_at > clock_timestamp()
 RETURNING ...
 ```
 
-The row is consumed **before** the WebAuthn verification or the password
-update runs. A failed verification therefore still burns the challenge, and
-the dependent change runs in the same transaction.
+For email verification, reset and recovery, bind the update to the intended
+user and value. Consumption, the dependent credential change, revocation and
+audit event commit together. On rollback, none takes effect; no session or
+success response may escape before commit.
+
+**WebAuthn challenges: claim and commit before verification.**
+
+Look up by the random transaction `id`, purpose and browser `context_hash`,
+also matching `user_id` for registration or username-first authentication.
+Atomically mark the challenge consumed and commit that short transaction
+before calling the verifier. Return the stored challenge hash and bindings
+to the winning request only. The library must verify the response challenge
+against that stored hash through its supported callback; never use the
+submitted challenge as its own expected value. Wrong context or purpose
+must not burn another browser's challenge.
+
+Verification failure or a later transaction rollback leaves the challenge
+burned. Credential insertion, counter updates, session issuance and their
+audit event run in a subsequent transaction, which rechecks account status,
+credential validity and relevant revocation state. On failure, restart the
+ceremony. TC-PKY-04 must cover invalid signatures and injected post-claim
+failures followed by replay; TC-PKY-06 must prove a wrong browser cannot
+consume the legitimate challenge.
 
 **Codes: count the attempt atomically, then compare, then consume.**
 
 ```sql
 UPDATE ... SET attempts = attempts + 1
 WHERE id = $1 AND purpose = 'access_code' AND consumed_at IS NULL
-  AND expires_at > now() AND attempts < max_attempts AND context_hash = $2
+  AND expires_at > clock_timestamp() AND attempts < max_attempts AND context_hash = $2
 RETURNING verifier
 ```
 
-Then compare in constant time. If the code matches, consume with
-`UPDATE ... SET consumed_at = now() WHERE id = $1 AND consumed_at IS NULL`,
-which must affect exactly one row.
+Commit the attempt increment before comparing in constant time. Invalid codes
+and subsequent rollbacks must not restore the attempt budget. If the code
+matches, conditionally consume it in the same transaction as the protected
+change and audit event. Recheck `id`, purpose, context, user binding, expiry
+and unconsumed state; exactly one row must be affected. TC-CODE-03 to 06 must
+cover failed attempts, injected rollback and concurrent valid redemption.
+
+All expiry checks use actual database time, including after lock waits;
+transaction-start `now()` must not extend validity (ADR-007, TC-XC-10).
 
 ### Proposed TTLs
 
@@ -127,7 +154,7 @@ These are for the owner to confirm. All are configurable within hard maximums.
 | --- | --- | --- |
 | WebAuthn ceremonies | 5 minutes (matches the ceremony `timeout`) | 10 minutes |
 | Reauthentication | 5 minutes | 10 minutes |
-| Access code (Mode A) | 10 minutes | 15 minutes |
+| Access code (Mode A) | 10 minutes | 10 minutes (access-code threat-model minimum requirements) |
 | Password reset, email recovery | 30 minutes | 2 hours |
 | Email verification | 24 hours | 7 days |
 

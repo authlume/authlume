@@ -87,6 +87,17 @@ channel.
 | Sign out everywhere | Revoke all | Invalidate reauthentication challenges | No change | No change | Optional |
 | Account disabled or deleted | Revoke all | Invalidate all | Invalidate all | Disable or delete | Developer hook |
 
+**Pre-registration takeover prevention:** the first proof of email ownership
+also invalidates the password credential created before verification. Merely
+revoking sessions and passkeys leaves the pre-registering attacker able to
+sign in again with that password (PWD-T15). Verification must not promote the
+unverified session or its credentials. Establish a new password or passkey
+through the owner-verified claim flow before granting a full session. A reset
+may establish its submitted new password atomically with this invalidation.
+TC-PWD-21 must attempt a fresh sign-in with the old password, as well as replay
+old sessions and passkeys, and verify that only the newly established
+credential works.
+
 ### Mass revocation
 
 A per-user `session_epoch` counter is incremented on "revoke all" events and

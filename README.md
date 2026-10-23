@@ -8,7 +8,7 @@ infrastructure. No Authlume-operated server is required, and no user data leaves
 the systems you control.
 
 > [!WARNING]
-> **Development status: planning (Phase P0, governance).**
+> **Development status: planning (P0 governance and P1 design drafts).**
 > There is no usable code yet and no packages have been published to npm.
 > Authlume makes no security guarantees at this stage. Do not use it to protect
 > real users. Authlume will not be recommended for production use until it has
@@ -75,7 +75,7 @@ packages will be versioned and released.
 | Phase | Focus | Status |
 | --- | --- | --- |
 | P0 | Brand, accounts and governance | In progress |
-| P1 | Specification and threat model | Not started |
+| P1 | Specification and threat model | Drafts in review; approval outstanding |
 | P2 | Monorepo foundation and CI | Not started |
 | P3 to P8 | Persistence, credentials, passkeys, integrations, documentation | Not started |
 | P9 | Public beta security gate | Not started |

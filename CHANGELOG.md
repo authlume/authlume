@@ -23,4 +23,16 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   ADR-007 (rate-limit store), and new ADR-011 (password hashing), ADR-012
   (challenge storage) and ADR-013 (token rotation).
 
+### Fixed
+
+- P1 draft specifications: invalidate pre-verification password credentials on
+  account claim, persist failed-attempt budgets across authentication rollback,
+  separate WebAuthn challenge burning from dependent state transactions, and
+  recheck expiry with actual database time.
+- Correct final NIST password normalization guidance to NFC, distinguish
+  browser runtime guards from build rejection, and replace unsupported
+  access-code cracking timings with explicit throughput assumptions.
+- Align public phase status, proposed ADR choices and access-code context/TTL
+  requirements with the P1 drafts. All ADRs remain Proposed and not reviewed.
+
 No packages have been released.

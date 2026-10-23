@@ -74,7 +74,7 @@ react       -> core (type-only imports)
 **Boundary enforcement:**
 
 1. `core` has no database, Node-only or browser-only APIs, holds no secrets, and has minimal or no runtime dependencies.
-2. Every server-only package (`server`, `postgres`, `node`, `next`, `access-code`) maps the `browser` export condition to a stub that throws at import time ("this package must not be bundled for the browser"). Bundlers that honour the `browser` condition then fail loudly.
+2. Every server-only package (`server`, `postgres`, `node`, `next`, `access-code`) needs a build-time browser import guard verified against the supported bundlers. Mapping the `browser` condition to a throwing stub is only a runtime fallback: bundlers may successfully emit that stub without executing it. It does not by itself meet the build-rejection requirement. P2 must demonstrate that even a side-effect-only server import fails the client build, and that server implementation code never enters its output.
 3. `next` additionally uses the Next.js server-only marker convention, so importing it from a client component fails the build.
 4. `react` has no runtime dependency on any server package. WebAuthn browser calls can use a maintained browser helper library, chosen in ADR-003, instead of a new `@authlume/browser` package. V1 adds no eighth package.
 5. Configuration types are split into server configuration, which may hold secrets, and public configuration. Only public configuration types are exported from `react`.

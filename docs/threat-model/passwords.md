@@ -189,7 +189,7 @@ A-1, A-2, A-3, A-7, A-11, A-13 and A-14 (see the [asset list](README.md#assets))
 | --- | --- | --- | --- |
 | TC-PWD-01 | T01 | Repeated failures for one account from many sources trigger account-level throttling, with a generic response. | P4 |
 | TC-PWD-02 | T01 | Spraying one password across many accounts from one source or prefix triggers source-level throttling. | P4 |
-| TC-PWD-03 | T01 | Failures spread across two application instances count against one shared limit (INV-08). | P4 |
+| TC-PWD-03 | T01 | Failures spread across two application instances count against one shared limit (INV-08). Invalid credentials and injected authentication rollbacks do not refund consumed attempts. | P4 |
 | TC-PWD-04 | T02 | Unknown email and wrong password return byte-identical status, headers (other than date) and body. | P4 |
 | TC-PWD-05 | T03 | Latency distributions for unknown and known accounts cannot be told apart within a documented statistical threshold (dummy hash active). | P4 |
 | TC-PWD-06 | T02 | Registering with an existing email returns the same response as a new registration, and the existing owner receives a notice. | P4 |
@@ -207,7 +207,7 @@ A-1, A-2, A-3, A-7, A-11, A-13 and A-14 (see the [asset list](README.md#assets))
 | TC-PWD-18 | T12, T13 | Completing a reset revokes all sessions and sends a notification. A password change revokes all other sessions. | P4 |
 | TC-PWD-19 | T14 | Password and email change without the current password or recent reauthentication is refused. | P4 |
 | TC-PWD-20 | T14 | Changing the email invalidates verification tokens for the previous address, and the old address is notified. | P4 |
-| TC-PWD-21 | T15 | When a pre-registered, unverified account is claimed by verification or reset, the earlier party's sessions and password stop working. | P4 |
+| TC-PWD-21 | T15 | When a pre-registered, unverified account is claimed by verification or reset, the earlier party's sessions, passkeys and password stop working. A fresh sign-in with the old password fails; only a newly established owner credential works. | P4 |
 | TC-PWD-22 | T01 | Blocklisted passwords are rejected. Composition rules are not required. | P4 |
 | TC-PWD-23 | T17 | Imported legacy hashes are stored wrapped, and the first successful sign-in upgrades them. | P4 |
-| TC-PWD-24 | T18 | Passwords that are equivalent under the chosen normalization form verify identically. | P4 |
+| TC-PWD-24 | T18 | NFC-equivalent passwords verify identically; compatibility characters that NFC leaves distinct remain distinct. Minimum lengths count Unicode code points, including supplementary-plane characters. Imported credentials retain their recorded normalization form. | P4 |

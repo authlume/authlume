@@ -155,9 +155,9 @@ A-1, A-5, A-8, A-11 and A-14.
 | TC-PKY-01 | T02 | An RP ID hash that does not match the configured RP ID is rejected. | P5 |
 | TC-PKY-02 | T02 | Origins not on the allowlist are rejected: sibling subdomain, `http` scheme, different port, trailing variants. | P5 |
 | TC-PKY-03 | T01 | Replaying a previously accepted assertion or challenge is rejected. | P5 |
-| TC-PKY-04 | T01 | A challenge past its TTL is rejected, judged by the database clock. | P5 |
+| TC-PKY-04 | T01 | A challenge past its TTL is rejected using actual database time. Invalid signatures and injected failures after a committed claim leave the challenge burned; replay fails. | P5 |
 | TC-PKY-05 | T01, T03 | A registration challenge used for authentication, or the reverse, is rejected. | P5 |
-| TC-PKY-06 | T03 | A challenge submitted from a different browser context than the one that started it is rejected. | P5 |
+| TC-PKY-06 | T03 | A challenge submitted from a different browser context is rejected without consuming the initiating browser's challenge; that browser can still complete it. | P5 |
 | TC-PKY-07 | T03 | A tampered `authenticatorData`, an invalid signature, or a `clientDataJSON.type` mismatch is rejected. | P5 |
 | TC-PKY-08 | T07 | When user verification is required, an assertion with UV=0 is rejected. UP=0 is always rejected. | P5 |
 | TC-PKY-09 | T05 | Registering a credential ID that already exists, on the same or another account, is rejected. | P5 |

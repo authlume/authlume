@@ -36,7 +36,7 @@ plaintext logging. The algorithm is therefore settled. This ADR decides:
 ### Option C: the Node.js built-in Argon2 API
 
 - **Advantages:** no third-party native dependency.
-- **Disadvantages:** to be confirmed: Node.js added a built-in Argon2 API in the 24.x release line, but its exact version, stability index and output format must be checked. It is unavailable on older supported runtimes, and returns raw bytes, so Authlume would have to write its own PHC encoding.
+- **Disadvantages:** introduced in Node.js v24.7.0 with Stability 1.2 (release candidate), returning raw derived bytes rather than PHC strings ([versioned documentation](https://nodejs.org/download/release/v24.7.0/docs/api/crypto.html#cryptoargon2algorithm-parameters-callback)). Stability must be rechecked against the eventual ADR-008 runtime matrix; the API is absent from older runtimes and needs reviewed PHC handling.
 - **Security consequences:** promising once stable. Writing PHC handling adds code to review.
 - **Migration cost:** low.
 
@@ -88,16 +88,21 @@ custody rules are in ADR-006.
 ### Password policy
 
 This follows NIST SP 800-63B (Revision 4) guidance:
-- A length-based minimum. The proposed default is 15 characters when the password is the only factor, and 8 when another factor is always required. Both numbers must be confirmed against the published text before acceptance.
+- A length-based minimum: 15 Unicode code points for single-factor use; a minimum of 8 is permitted only when the password is always part of multi-factor authentication. A second knowledge secret does not qualify as another factor.
 - No composition rules and no forced periodic changes.
 - A blocklist check against common and compromised passwords, using a bundled list plus an optional developer hook for an external breach service. No Authlume-operated service is involved.
 - At least 64 characters are accepted.
 
 ### Normalization
 
-Apply Unicode NFKC to the password before hashing, as NIST permits (NFKC or
-NFKD). The normalization version is recorded with the hash, so it can be
-changed later (PWD-T18).
+Apply Unicode NFC before hashing, following the final
+[NIST SP 800-63B-4 password-verifier guidance](https://pages.nist.gov/800-63-4/sp800-63b.html#passwordver).
+Earlier drafts recommended NFKC or NFKD; the final revision recommends NFC.
+Count Unicode code points rather than JavaScript UTF-16 code units for length
+validation. Record the normalization form with the hash and retain the legacy
+form when verifying imported credentials (PWD-T18). TC-PWD-24 must cover
+canonical equivalents, compatibility characters that NFC leaves distinct,
+and supplementary-plane characters at the length boundary.
 
 ### Length cap
 

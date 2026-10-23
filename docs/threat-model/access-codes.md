@@ -23,17 +23,18 @@ Decisions that depend on this document:
 
 ## How strong is a 12-digit code?
 
-These are order-of-magnitude figures to support the analysis. They must be
-re-checked during review.
+The probability calculations assume uniform independent codes. Offline timing
+depends on the exact verifier and measured hardware throughput; no benchmark
+has been performed for this project.
 
 | Quantity | Value |
 | --- | --- |
 | Code space | 10^12, about 2^39.9, so roughly **40 bits** |
 | Mode A: success chance per transaction with k attempts | k / 10^12. With k = 5, that is 5 × 10^-12. |
 | Guessing when codes are looked up across all accounts | Each guess succeeds with probability of about N / 10^12. With N = 10^6 accounts, an even chance of one hit takes about **700,000 guesses**, which is reachable for a botnet. |
-| Offline search of an **unkeyed** hash (SHA-256) | All 10^12 candidates. A single current GPU computes SHA-256 at roughly 10^10 per second, so about **a minute or two per code**. |
-| Offline search of a keyed HMAC when the key also leaks (ATK-8) | The same as unkeyed, so minutes. |
-| Offline search with a keyed **and** memory-hard verifier when the key leaks | Mass cracking becomes impractical. A well-funded attacker can still crack a targeted account. |
+| Offline search of an **unkeyed** hash (SHA-256) | Up to 10^12 candidates, with an expected 5 × 10^11 guesses for one uniformly selected code. At measured throughput R guesses/second, expected time is (5 × 10^11) / R seconds. |
+| Offline search of a keyed HMAC when the key also leaks (ATK-8) | The same candidate space, but HMAC throughput must be measured separately; SHA-256 throughput is not an HMAC benchmark. |
+| Offline search with a keyed **and** memory-hard verifier when the key leaks | Raises cost per guess; feasibility depends on parameters, hardware and budget. No cracking-resistance guarantee is established here. |
 
 The conclusion is that 40 bits is enough only when an attacker gets very few
 online guesses, every guess is bound to a short-lived transaction, and the
@@ -79,7 +80,7 @@ server key custody and on throttling, for as long as it is valid.
 
 ### CODE-T04 Code used outside its bound context
 - **Attacker:** ATK-10. **STRIDE:** Spoofing. **Severity:** High.
-- **Mitigations:** redemption requires the transaction ID **and** the initiating browser's context secret. A correct code from any other context is rejected and counts as an attempt.
+- **Mitigations:** redemption requires the transaction ID **and** the initiating browser's context secret. A different context is rejected and source-throttled without consuming the legitimate transaction's attempt budget (ADR-012).
 - **Tests:** TC-CODE-05.
 
 ### CODE-T05 Concurrent redemption
@@ -135,7 +136,7 @@ server key custody and on throttling, for as long as it is valid.
 
 ### CODE-T14 Key leak makes every persistent code recoverable
 - **Attacker:** ATK-8. **STRIDE:** Information disclosure. **Severity:** High.
-- **Abuse case:** with the HMAC key, each code is recovered in minutes, and stays useful until rotation.
+- **Abuse case:** with the HMAC key, an attacker can search the 40-bit code space offline; any recovered code stays useful until rotation. Recovery time depends on measured verifier throughput.
 - **Mitigations:** a keyed **and** memory-hard verifier (ADR-006), and rotation.
 - **Residual:** RR-CODE-04.
 
@@ -231,9 +232,9 @@ that matches one of them must be rejected in review.
 | --- | --- | --- | --- |
 | TC-CODE-01 | T09 | Codes are uniform over 10^12 (statistical test), use rejection sampling, and preserve leading zeros. | P6 |
 | TC-CODE-02 | T06 | Stored verifiers are keyed HMACs. A database scan finds no plaintext or unkeyed hash of any issued code. | P6 |
-| TC-CODE-03 | T01 | After k failed attempts, the transaction is burned, and the correct code is rejected too. | P6 |
-| TC-CODE-04 | T05 | 20 concurrent submissions of the correct code produce exactly one success. | P6 |
-| TC-CODE-05 | T03, T04 | A correct code submitted from a different context is rejected and counts as an attempt. | P6 |
+| TC-CODE-03 | T01 | After k failed attempts, the transaction is burned, and the correct code is rejected too. Invalid codes and injected downstream rollbacks do not refund attempts. | P6 |
+| TC-CODE-04 | T05 | 20 concurrent submissions of the correct code produce exactly one success. An injected failure rolls back consumption together with the protected change and audit event. | P6 |
+| TC-CODE-05 | T03, T04 | A correct code submitted from a different context is rejected and source-throttled without spending the legitimate transaction's attempt budget. The initiating browser can still complete it. | P6 |
 | TC-CODE-06 | T01 | An expired transaction is rejected, judged by the database clock. | P6 |
 | TC-CODE-07 | T02, T08 | Guesses spread across several application instances are limited by shared counters. | P6 |
 | TC-CODE-08 | T02 | Limits on transaction creation per account and per source are enforced. | P6 |
