@@ -60,8 +60,16 @@ rulesets.
 
 Ruleset for the default branch `main`:
 
+> [!IMPORTANT]
+> GitHub does not let pull request authors approve their own pull requests.
+> While `@9jaDevo` is the only maintainer, a rule requiring one code-owner
+> approval would block every maintainer pull request, including the P0 pull
+> request. Until a second maintainer with write access exists, set required
+> approvals to **0** and keep every other rule below. Raise it to 1 when the
+> second maintainer joins, and record the change in the Phase Tracker.
+
 - Require a pull request before merging.
-  - Required approvals: 1.
+  - Required approvals: 1 (0 while there is a single maintainer, as above).
   - Require review from code owners.
   - Dismiss stale approvals when new commits are pushed.
   - Require approval of the most recent push by someone other than its author.
