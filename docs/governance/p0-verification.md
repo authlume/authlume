@@ -1,0 +1,242 @@
+# Phase P0 verification evidence
+
+This log records how each P0 account and reservation item was checked, and
+what the result was. It backs the evidence column of the
+[Phase Tracker](../../AUTHLUME_PHASE_TRACKER.md). An AI agent ran the checks on
+**2026-10-23, between 08:20 and 09:15 UTC**, from a local development machine,
+using the GitHub CLI authenticated as `9jaDevo` and unauthenticated HTTPS
+requests.
+
+Results are reported as observed. Where something could not be verified, this
+log says so.
+
+## 1. GitHub organization `authlume`
+
+```text
+$ gh api orgs/authlume
+login: authlume   id: 346786269   type: Organization
+created_at: 2026-10-23T07:38:09Z
+plan: free
+two_factor_requirement_enabled: false
+public_repos: 0   total_private_repos: 0
+```
+
+```text
+$ gh api user/memberships/orgs/authlume
+user: 9jaDevo   state: active   role: admin
+```
+
+```text
+$ gh api orgs/authlume/members          ->  9jaDevo (1 member)
+$ gh api orgs/authlume/invitations      ->  1 pending invitation (direct_member, not yet accepted)
+$ gh api orgs/authlume/teams            ->  none
+```
+
+**Result:** the organization exists, and `9jaDevo` is its only member and an
+active admin. The organization 2FA requirement is **off**. The pending invitee
+is not a verified maintainer, so is not listed in `CODEOWNERS`.
+
+## 2. Primary repository `authlume/authlume`
+
+```text
+$ gh api repos/authlume/authlume
+{"message":"Not Found","status":"404"}
+
+$ gh repo list authlume
+(no repositories)
+```
+
+**Result:** the repository **did not exist** when checked. The agent asked the
+owner for authorization. The owner authorized creating it as a **private**
+repository, and the agent then created it:
+
+```text
+$ gh repo create authlume/authlume --private --description "..."
+$ gh api repos/authlume/authlume
+full_name: authlume/authlume   visibility: private   default_branch: main
+created_at: 2026-10-23T08:35:13Z
+```
+
+After the owner registered `authlume.org`, the owner authorized making the
+repository public:
+
+```text
+$ gh repo edit authlume/authlume --visibility public
+$ gh api repos/authlume/authlume          # 2026-10-23T09:11Z
+visibility: public   private: false   default_branch: main
+
+$ curl https://api.github.com/repos/authlume/authlume     # unauthenticated
+HTTP 200
+
+$ gh api repos/authlume/authlume --jq .security_and_analysis
+secret_scanning, secret_scanning_push_protection, dependabot_security_updates: disabled
+
+$ gh api repos/authlume/authlume/private-vulnerability-reporting
+{"enabled":false}
+```
+
+**Result:** the repository is public. At this point its security features were
+not yet turned on; see section 8 for when they were applied.
+
+```text
+$ gh api "repos/authlume/authlume/codeowners/errors?ref=chore/p0-governance"
+{"errors":[]}
+```
+
+**Result:** GitHub reports no syntax or permission errors in `CODEOWNERS`.
+
+## 3. npm organization `authlume` and scope `@authlume`
+
+The registry's organization endpoint distinguishes existing scopes from
+missing ones. A control request for a made-up scope returns `404 Scope not found`:
+
+```text
+$ curl https://registry.npmjs.org/-/org/authlume/package
+HTTP 200  {}                               # organization exists, 0 packages
+
+$ curl https://registry.npmjs.org/-/org/zzq-nonexistent-org-8f3k2x/package
+HTTP 404  {"error":"Scope not found"}      # control
+```
+
+```text
+$ curl https://registry.npmjs.org/@authlume%2f<name>
+core, server, postgres, node, next, react, access-code  ->  HTTP 404 each (not published)
+
+$ curl https://registry.npmjs.org/authlume
+HTTP 404                                   # unscoped name unclaimed
+
+$ curl "https://registry.npmjs.org/-/v1/search?text=scope:authlume"
+{"objects":[],"total":0}
+```
+
+```text
+$ npm whoami
+npm error code ENEEDAUTH                   # npm CLI not logged in on this machine
+```
+
+**Result:** the npm organization `authlume` exists and has published nothing.
+**Not verified:** who the organization's members and owners are, and whether
+2FA is enforced. The agent deliberately did not log in to npm. The founder
+should confirm ownership with:
+
+```sh
+npm org ls authlume
+npm profile get
+```
+
+The first command should list the founder's npm account with the `owner` role.
+The second shows whether 2FA is turned on for the founder's npm account.
+
+## 4. Domain `authlume.org`
+
+```text
+$ curl https://rdap.publicinterestregistry.org/rdap/domain/authlume.org
+HTTP 404  {"errorCode":404,"title":"Object not found"}
+
+$ nslookup authlume.org
+Non-existent domain (NXDOMAIN)
+```
+
+**Result at first check:** `authlume.org` was **not registered**.
+
+The founder then reported registering the domain. Re-check at 2026-10-23T09:10Z:
+
+```text
+$ curl https://rdap.publicinterestregistry.org/rdap/domain/authlume.org
+HTTP 200
+ldhName: authlume.org
+status: client transfer prohibited, add period
+registration: 2026-10-23T09:08:53Z   expiration: 2027-10-23T09:08:53Z
+registrar: Spaceship, Inc.
+nameservers: launch1.spaceship.net, launch2.spaceship.net
+registrant: redacted
+
+$ nslookup -type=SOA authlume.org 8.8.8.8
+Non-existent domain                        # DNS not yet propagated at time of check
+```
+
+**Result:** `authlume.org` is registered. RDAP does not show the registrant, so
+ownership rests on the founder's written confirmation (2026-10-23). Verifying
+the domain on the GitHub organization will add DNS proof of control.
+
+## 5. Legal and trademark review
+
+**Result:** no trademark or similarity search was performed, and no review or
+legal opinion was provided as evidence. Status: not started. Nothing in this
+repository claims trademark clearance. See
+[ADR-010](../adr/0010-legal-trademark-and-npm-scope.md).
+
+## 6. License text
+
+```text
+$ curl https://www.apache.org/licenses/LICENSE-2.0.txt | sha256sum
+cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30
+
+$ sha256sum LICENSE
+cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30
+```
+
+**Result:** `LICENSE` is byte-identical to the canonical Apache License 2.0 text
+published by the Apache Software Foundation.
+
+## 7. Other registries
+
+```text
+$ curl "https://packagist.org/packages/list.json?vendor=authlume"
+{"packageNames":[]}
+```
+
+**Result:** no Packagist packages use the `authlume` vendor name. The name is
+not reserved, which is expected because PHP is out of scope for V1.
+
+## 8. Repository security settings and `main` ruleset
+
+The owner authorized turning on private vulnerability reporting, secret
+scanning with push protection, Dependabot alerts and security updates, and
+creating a `main` ruleset with 0 required approvals. Applied and checked at
+2026-10-23T09:15Z:
+
+```text
+$ gh api -X PUT repos/authlume/authlume/private-vulnerability-reporting
+$ gh api repos/authlume/authlume/private-vulnerability-reporting
+{"enabled":true}
+
+$ gh api -X PATCH repos/authlume/authlume   # security_and_analysis
+$ gh api repos/authlume/authlume --jq .security_and_analysis
+secret_scanning: enabled   secret_scanning_push_protection: enabled
+dependabot_security_updates: enabled
+
+$ gh api -X PUT repos/authlume/authlume/vulnerability-alerts
+$ gh api repos/authlume/authlume/vulnerability-alerts
+HTTP 204                                   # Dependabot alerts enabled
+
+$ gh api repos/authlume/authlume/automated-security-fixes
+{"enabled":true,"paused":false}
+```
+
+```text
+$ gh api -X POST repos/authlume/authlume/rulesets   # name "main"
+id: 25710980   enforcement: active   target: branch
+conditions: ref_name include ["~DEFAULT_BRANCH"]
+bypass_actors: []
+
+$ gh api repos/authlume/authlume/rules/branches/main
+deletion                 (ruleset 25710980)
+non_fast_forward         (ruleset 25710980)
+required_linear_history  (ruleset 25710980)
+pull_request             (ruleset 25710980)
+  required_approving_review_count: 0
+  require_code_owner_review: false
+  require_last_push_approval: false
+  dismiss_stale_reviews_on_push: true
+  required_review_thread_resolution: true
+
+$ gh pr view 1 --json mergeable,mergeStateStatus
+{"mergeable":"MERGEABLE","mergeStateStatus":"CLEAN"}
+```
+
+**Result:** the protections are active on `main`, and the owner can still merge
+pull requests. Code-owner review and most-recent-push approval are off, because
+GitHub does not let authors approve their own pull requests and there is only
+one maintainer. Turn them back on, together with one required approval, when a
+second maintainer joins.

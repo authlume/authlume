@@ -1,0 +1,10 @@
+# Code owners are requested automatically for review on every pull request.
+#
+# List only verified maintainers who have write access to this repository.
+# Verified 2026-10-23: @9jaDevo is an admin of the authlume GitHub organization.
+#
+# When an independent security reviewer team exists, assign it to security-
+# sensitive paths (for example packages/server/ and packages/access-code/).
+# Record the change in the Phase Tracker.
+
+* @9jaDevo
