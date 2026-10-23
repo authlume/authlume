@@ -46,9 +46,20 @@ $ gh repo list authlume
 (no repositories)
 ```
 
-**Result:** the repository **did not exist** when checked. Creating it needs the
-owner's explicit authorization. Its creation, if authorized, is recorded in the
-Phase Tracker.
+**Result:** the repository **did not exist** when checked. The agent asked the
+owner for authorization. The owner authorized creating it as a **private**
+repository, and the agent then created it:
+
+```text
+$ gh repo create authlume/authlume --private --description "..."
+$ gh api repos/authlume/authlume
+full_name: authlume/authlume   visibility: private   default_branch: main
+created_at: 2026-10-23T08:35:13Z
+```
+
+On the GitHub Free plan, branch rulesets and private vulnerability reporting
+do not apply to private repositories. See the
+[repository settings](repository-settings.md#plan-constraint-public-or-private).
 
 ## 3. npm organization `authlume` and scope `@authlume`
 
