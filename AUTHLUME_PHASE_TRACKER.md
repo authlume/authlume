@@ -45,7 +45,7 @@ Weekly: CI health, vulnerability queue, open PR age, docs friction, real install
 For each task record: `Task ID | Owner | PR URL | Tests/evidence | Security reviewer | Status | Blockers | Decision/ADR | Date`.
 
 ## P0 working tracker
-Evidence checked 2026-10-23 by an AI agent; commands and raw results are in [`docs/governance/p0-verification.md`](docs/governance/p0-verification.md). Agent-drafted items stay in REVIEW until the founder approves and merges them. Agent-authored PR: pending (branch `chore/p0-governance`).
+Evidence checked 2026-10-23 by an AI agent; commands and raw results are in [`docs/governance/p0-verification.md`](docs/governance/p0-verification.md). Agent-drafted items stay in REVIEW until the founder approves and merges them. Agent-authored PR: https://github.com/authlume/authlume/pull/1 (branch `chore/p0-governance`).
 
 | Task ID | Owner | PR URL | Tests/evidence | Security reviewer | Status | Blockers | Decision/ADR | Date |
 |---|---|---|---|---|---|---|---|---|
@@ -55,14 +55,14 @@ Evidence checked 2026-10-23 by an AI agent; commands and raw results are in [`do
 | P0-04 Primary repository `authlume/authlume` | Founder (authorized), agent (created) | — | Initially 404. Created **private** on founder authorization: `gh api repos/authlume/authlume` shows created 2026-10-23T08:35:13Z, visibility private, default branch `main` | — | COMPLETE | Make public once P0 is reviewed and the domain is registered | ADR-009 | 2026-10-23 |
 | P0-05 Domain `authlume.org` owned | Founder | — | PIR RDAP returns 404 "Object not found"; DNS NXDOMAIN; domain **not registered** | — | NOT STARTED | Founder registers domain; then org domain verification and security/conduct addresses | ADR-010 | 2026-10-23 |
 | P0-06 Legal/trademark similarity review | Founder + qualified advisor | — | No search performed; no review or opinion on record. **No clearance claimed.** | — | NOT STARTED | Founder commissions or performs review | ADR-010 | 2026-10-23 |
-| P0-07 Apache-2.0 LICENSE and NOTICE | Agent draft, founder approval | Pending | `LICENSE` sha256 `cfc7749b…d30`, identical to apache.org text | — | REVIEW | Copyright holder wording in `NOTICE` | ADR-010 | 2026-10-23 |
-| P0-08 README with development-status disclaimer | Agent draft, founder approval | Pending | `README.md` | — | REVIEW | — | ADR-001 (package table is proposed) | 2026-10-23 |
-| P0-09 SECURITY.md private disclosure | Agent draft, founder approval | Pending | `SECURITY.md` uses GitHub private vulnerability reporting | Founder (policy review) | REVIEW | Private vulnerability reporting must be enabled (public repos only on Free plan); security email waits on P0-05 | ADR-009 | 2026-10-23 |
-| P0-10 CONTRIBUTING.md | Agent draft, founder approval | Pending | `CONTRIBUTING.md` | — | REVIEW | DCO decision | ADR-009 | 2026-10-23 |
-| P0-11 CODE_OF_CONDUCT.md | Agent draft, founder approval | Pending | Contributor Covenant 2.0, interim enforcement contact | — | REVIEW | Dedicated conduct contact waits on P0-05 | — | 2026-10-23 |
-| P0-12 Issue forms and PR template | Agent draft, founder approval | Pending | `.github/ISSUE_TEMPLATE/*`, `.github/PULL_REQUEST_TEMPLATE.md` | — | REVIEW | — | — | 2026-10-23 |
-| P0-13 CODEOWNERS with verified maintainers | Agent draft, founder approval | Pending | `* @9jaDevo` (only verified maintainer); pending invitee excluded | — | REVIEW | Second owner recommended; GitHub CODEOWNERS validation after push | ADR-009 | 2026-10-23 |
-| P0-14 Documentation structure and strategy docs | Agent draft, founder approval | Pending | `docs/` index, ADR register and template, ADR-009/010 (Proposed), NPM publishing and ecosystem strategy, repository settings | — | REVIEW | Founder decisions in ADR-009 and ADR-010 | ADR-009, ADR-010 | 2026-10-23 |
+| P0-07 Apache-2.0 LICENSE and NOTICE | Agent draft, founder approval | [PR 1](https://github.com/authlume/authlume/pull/1) | `LICENSE` sha256 `cfc7749b…d30`, identical to apache.org text | — | REVIEW | Copyright holder wording in `NOTICE` | ADR-010 | 2026-10-23 |
+| P0-08 README with development-status disclaimer | Agent draft, founder approval | [PR 1](https://github.com/authlume/authlume/pull/1) | `README.md` | — | REVIEW | — | ADR-001 (package table is proposed) | 2026-10-23 |
+| P0-09 SECURITY.md private disclosure | Agent draft, founder approval | [PR 1](https://github.com/authlume/authlume/pull/1) | `SECURITY.md` uses GitHub private vulnerability reporting | Founder (policy review) | REVIEW | Private vulnerability reporting must be enabled (public repos only on Free plan); security email waits on P0-05 | ADR-009 | 2026-10-23 |
+| P0-10 CONTRIBUTING.md | Agent draft, founder approval | [PR 1](https://github.com/authlume/authlume/pull/1) | `CONTRIBUTING.md` | — | REVIEW | DCO decision | ADR-009 | 2026-10-23 |
+| P0-11 CODE_OF_CONDUCT.md | Agent draft, founder approval | [PR 1](https://github.com/authlume/authlume/pull/1) | Contributor Covenant 2.0, interim enforcement contact | — | REVIEW | Dedicated conduct contact waits on P0-05 | — | 2026-10-23 |
+| P0-12 Issue forms and PR template | Agent draft, founder approval | [PR 1](https://github.com/authlume/authlume/pull/1) | `.github/ISSUE_TEMPLATE/*`, `.github/PULL_REQUEST_TEMPLATE.md` | — | REVIEW | — | — | 2026-10-23 |
+| P0-13 CODEOWNERS with verified maintainers | Agent draft, founder approval | [PR 1](https://github.com/authlume/authlume/pull/1) | `* @9jaDevo` (only verified maintainer); pending invitee excluded | — | REVIEW | Second owner recommended; GitHub CODEOWNERS validation after push | ADR-009 | 2026-10-23 |
+| P0-14 Documentation structure and strategy docs | Agent draft, founder approval | [PR 1](https://github.com/authlume/authlume/pull/1) | `docs/` index, ADR register and template, ADR-009/010 (Proposed), NPM publishing and ecosystem strategy, repository settings | — | REVIEW | Founder decisions in ADR-009 and ADR-010 | ADR-009, ADR-010 | 2026-10-23 |
 | P0-15 Repository protections applied | Founder | — | Not applied. Repository is private on the GitHub Free plan | — | BLOCKED | On the Free plan, rulesets and private vulnerability reporting need a public repo (or a paid plan) | ADR-009 | 2026-10-23 |
 
 ### P0 exit criteria (2026-10-23)
