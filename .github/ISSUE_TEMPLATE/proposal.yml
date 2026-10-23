@@ -1,0 +1,63 @@
+name: Proposal
+description: Suggest a capability or a change to a design decision.
+title: "[Proposal]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Authlume follows the [Master Blueprint](https://github.com/authlume/authlume/blob/main/AUTHLUME_MASTER_BLUEPRINT.md). Changes to scope, architecture, package boundaries or security invariants need an approved [ADR](https://github.com/authlume/authlume/blob/main/docs/adr/README.md) before implementation. This form starts that conversation.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What problem does this solve, and for whom?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+      description: Describe the change. Focus on behaviour and contracts rather than implementation detail.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: textarea
+    id: security
+    attributes:
+      label: Security considerations
+      description: New assets, trust boundaries, attacker capabilities or abuse cases this introduces, and how they would be mitigated. Write "None identified" only after thinking it through.
+    validations:
+      required: true
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Scope
+      description: The V1 scope and out-of-scope list are in section 4 of the Master Blueprint.
+      options:
+        - Within the V1 scope
+        - Outside the V1 scope (future work)
+        - Not sure
+    validations:
+      required: true
+  - type: dropdown
+    id: adr
+    attributes:
+      label: Related decision
+      description: Does this affect an open ADR?
+      options:
+        - Not sure
+        - No existing ADR
+        - ADR-001 Package naming and split
+        - ADR-002 Session strategy and cookie defaults
+        - ADR-003 Passkey credential lifecycle
+        - ADR-004 Email identity normalization and duplicates
+        - ADR-005 Access-code policies
+        - ADR-006 Verifier storage and secret rotation
+        - ADR-007 Transaction and rate-limit backing store
+        - ADR-008 Framework support matrix
+        - ADR-009 Repository and release process
+        - ADR-010 Legal, trademark and npm scope
