@@ -61,3 +61,6 @@ body:
         - ADR-008 Framework support matrix
         - ADR-009 Repository and release process
         - ADR-010 Legal, trademark and npm scope
+        - ADR-011 Password hashing (proposed)
+        - ADR-012 One-time challenge storage (proposed)
+        - ADR-013 Token rotation (proposed)

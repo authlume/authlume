@@ -7,8 +7,9 @@ Everyone who takes part agrees to follow our [Code of Conduct](CODE_OF_CONDUCT.m
 
 ## Where the project is today
 
-Authlume is in **Phase P0 (governance)**. The next phase, P1, produces the
-threat model and API contracts. No source code or build tooling exists yet;
+Authlume's **P0 governance remains in progress**, with **P1 threat-model and
+ADR drafts in review**. P1 approval and API contracts are still outstanding.
+No source code or build tooling exists yet;
 the monorepo arrives in Phase P2, after P1 is approved.
 
 The most valuable contributions right now are:
