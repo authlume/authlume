@@ -7,7 +7,7 @@ Statuses: NOT STARTED / IN PROGRESS / BLOCKED / REVIEW / COMPLETE. Each task nee
 | ID | Phase | Deliverables | Dependencies | Exit criteria | Status |
 |---|---|---|---|---|---|
 | P0 | Brand and governance | GitHub org, NPM scope, domain, Apache-2.0, SECURITY/CONTRIBUTING, CODEOWNERS, issue templates | None | Accounts secured; legal search noted; policies published | IN PROGRESS |
-| P1 | Specification and threat model | Auth flows, risk model, abuse scenarios, ADRs, API contracts | P0 | Independent design walkthrough; no unresolved critical risk | NOT STARTED |
+| P1 | Specification and threat model | Auth flows, risk model, abuse scenarios, ADRs, API contracts | P0 | Independent design walkthrough; no unresolved critical risk | IN PROGRESS |
 | P2 | Monorepo foundation | pnpm workspace, TS config, CI, release tooling, examples skeleton | P1 | Clean clone installs; type/lint/test/build green; protected branches | NOT STARTED |
 | P3 | Persistence and sessions | PostgreSQL adapter, migrations, transactional sessions, audit hooks | P2 | Concurrency/replay/revocation and migration tests pass | NOT STARTED |
 | P4 | Email/password | Register/login, verify email, password reset, rate limiting | P3 | Enumeration, reset replay, brute force and token-leak tests pass | NOT STARTED |
@@ -71,3 +71,25 @@ Evidence checked 2026-10-23 by an AI agent; commands and raw results are in [`do
 - [ ] **Policies published.** Governance files are drafted on `chore/p0-governance` and not merged.
 
 P0 remains IN PROGRESS. Note: the account-status sentence in Master Blueprint section 6 predates these checks and is left unchanged for the founder to update; this tracker records current status.
+
+## P1 working tracker
+P1 drafting started 2026-10-23 at the founder's direction, while P0 exit criteria remain open (see above). All items are AI-drafted and stay in REVIEW until the founder approves them; the security-relevant ones also need independent human security review. Nothing is implemented. Branch `p1/threat-model-and-adrs` (stacked on `chore/p0-governance`); PR not yet opened.
+
+| Task ID | Owner | PR URL | Tests/evidence | Security reviewer | Status | Blockers | Decision/ADR | Date |
+|---|---|---|---|---|---|---|---|---|
+| P1-01 Threat model: passwords, passkeys, recovery, sessions, access codes (both modes), cross-cutting | Agent draft, founder approval | — | [`docs/threat-model/`](docs/threat-model/README.md): 11 trust boundaries, 15 assets, 13 attacker capabilities, 11 invariants, 93 threats, 25 residual risks, 98 test cases mapped to the P3–P7 and P9 gates | Required, not assigned | REVIEW | Independent design walkthrough (P1 exit criterion) | ADR-001 to ADR-013 | 2026-10-23 |
+| P1-02 Unsafe long-lived numeric login designs flagged | Agent draft, founder decision | — | [Unsafe designs U-01 to U-12](docs/threat-model/access-codes.md#unsafe-numeric-code-designs); recommendation: remove Mode B from V1 | Required, not assigned | REVIEW | Founder decision in ADR-005 | ADR-005 (Open) | 2026-10-23 |
+| P1-03 ADR-001 package naming and split | Agent draft, founder approval | — | [ADR-001](docs/adr/0001-package-naming-and-split.md) (Proposed) | Required for the server/browser boundary | REVIEW | Founder decision | ADR-001 | 2026-10-23 |
+| P1-04 ADR-002 session strategy and cookie defaults | Agent draft, founder approval | — | [ADR-002](docs/adr/0002-session-strategy-and-cookie-defaults.md) (Proposed) | Required, not assigned | REVIEW | Founder decision on expiry, `SameSite` and metadata defaults | ADR-002 | 2026-10-23 |
+| P1-05 ADR-007 rate-limit persistence and transaction semantics | Agent draft, founder approval | — | [ADR-007](docs/adr/0007-transaction-and-rate-limit-backing-store.md) (Proposed) | Required, not assigned | REVIEW | Founder decision | ADR-007 | 2026-10-23 |
+| P1-06 ADR-011 password hashing (new) | Agent draft, founder approval | — | [ADR-011](docs/adr/0011-password-hashing.md) (Proposed) | Required, not assigned | REVIEW | Confirm NIST SP 800-63B Rev. 4 minimum length and Node.js built-in Argon2 status | ADR-011 | 2026-10-23 |
+| P1-07 ADR-012 one-time challenge storage (new) | Agent draft, founder approval | — | [ADR-012](docs/adr/0012-one-time-challenge-storage.md) (Proposed) | Required, not assigned | REVIEW | Depends on ADR-006 for low-entropy verifiers | ADR-012 | 2026-10-23 |
+| P1-08 ADR-013 token rotation and invalidation (new) | Agent draft, founder approval | — | [ADR-013](docs/adr/0013-token-rotation.md) (Proposed) | Required, not assigned | REVIEW | Founder decision on options B and C and the optional matrix cells | ADR-013 | 2026-10-23 |
+| P1-09 Remaining ADRs: 003, 004, 005, 006, 008 | — | — | Not drafted | Required for 003, 005, 006 | NOT STARTED | — | ADR-003 to 006, 008 | 2026-10-23 |
+| P1-10 API contracts: input and output schemas, error taxonomy, CSRF and rate-limit behaviour per endpoint | — | — | Not drafted | Required | NOT STARTED | Needs ADR-001, 002 and 012 decisions | Blueprint §8 | 2026-10-23 |
+| P1-11 Assign a phase for recovery codes | Founder | — | The tracker does not name the phase in which recovery codes ship | — | NOT STARTED | Founder decision | — | 2026-10-23 |
+| P1-12 Independent design walkthrough | Founder + independent reviewer | — | Not held | Required | NOT STARTED | P1-01 to P1-10 | — | 2026-10-23 |
+
+### P1 exit criteria (2026-10-23)
+- [ ] **Independent design walkthrough.** Not held.
+- [ ] **No unresolved critical risk.** The Mode B persistent access codes (ADR-005) and every Proposed ADR are unresolved.

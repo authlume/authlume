@@ -17,5 +17,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Security policy, contribution guide and Code of Conduct.
 - GitHub issue forms, pull request template and CODEOWNERS.
 - Documentation structure: ADR register, governance and strategy documents.
+- Draft P1 threat model for passwords, passkeys, recovery, sessions and both
+  access-code modes (not yet reviewed).
+- Proposed ADRs: ADR-001 (package split), ADR-002 (sessions and cookies),
+  ADR-007 (rate-limit store), and new ADR-011 (password hashing), ADR-012
+  (challenge storage) and ADR-013 (token rotation).
 
 No packages have been released.
