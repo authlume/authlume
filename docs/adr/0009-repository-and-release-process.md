@@ -56,8 +56,13 @@ stale approvals are dismissed, force pushes and deletion are blocked, and the
 required status checks are added once CI exists in P2.
 
 Constraint to note: on GitHub's Free plan, branch protection and rulesets are
-enforced only on **public** repositories. A private repository on the Free
-plan cannot enforce these rules.
+enforced only on **public** repositories.
+
+Status: on 2026-10-23, with owner authorization, the repository was made public
+and a `main` ruleset was applied in single-maintainer mode. That means 0
+required approvals and no code-owner review, because GitHub does not let
+authors approve their own pull requests. Required approvals and code-owner
+review become 1 and on when a second maintainer joins.
 
 ### 3. Signed commits and tags
 

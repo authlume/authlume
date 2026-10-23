@@ -75,8 +75,8 @@ $ gh api repos/authlume/authlume/private-vulnerability-reporting
 {"enabled":false}
 ```
 
-**Result:** the repository is public. Its security features are not turned on
-yet. See the [repository settings](repository-settings.md#repository-authlumeauthlume).
+**Result:** the repository is public. At this point its security features were
+not yet turned on; see section 8 for when they were applied.
 
 ```text
 $ gh api "repos/authlume/authlume/codeowners/errors?ref=chore/p0-governance"
@@ -188,3 +188,55 @@ $ curl "https://packagist.org/packages/list.json?vendor=authlume"
 
 **Result:** no Packagist packages use the `authlume` vendor name. The name is
 not reserved, which is expected because PHP is out of scope for V1.
+
+## 8. Repository security settings and `main` ruleset
+
+The owner authorized turning on private vulnerability reporting, secret
+scanning with push protection, Dependabot alerts and security updates, and
+creating a `main` ruleset with 0 required approvals. Applied and checked at
+2026-10-23T09:15Z:
+
+```text
+$ gh api -X PUT repos/authlume/authlume/private-vulnerability-reporting
+$ gh api repos/authlume/authlume/private-vulnerability-reporting
+{"enabled":true}
+
+$ gh api -X PATCH repos/authlume/authlume   # security_and_analysis
+$ gh api repos/authlume/authlume --jq .security_and_analysis
+secret_scanning: enabled   secret_scanning_push_protection: enabled
+dependabot_security_updates: enabled
+
+$ gh api -X PUT repos/authlume/authlume/vulnerability-alerts
+$ gh api repos/authlume/authlume/vulnerability-alerts
+HTTP 204                                   # Dependabot alerts enabled
+
+$ gh api repos/authlume/authlume/automated-security-fixes
+{"enabled":true,"paused":false}
+```
+
+```text
+$ gh api -X POST repos/authlume/authlume/rulesets   # name "main"
+id: 25710980   enforcement: active   target: branch
+conditions: ref_name include ["~DEFAULT_BRANCH"]
+bypass_actors: []
+
+$ gh api repos/authlume/authlume/rules/branches/main
+deletion                 (ruleset 25710980)
+non_fast_forward         (ruleset 25710980)
+required_linear_history  (ruleset 25710980)
+pull_request             (ruleset 25710980)
+  required_approving_review_count: 0
+  require_code_owner_review: false
+  require_last_push_approval: false
+  dismiss_stale_reviews_on_push: true
+  required_review_thread_resolution: true
+
+$ gh pr view 1 --json mergeable,mergeStateStatus
+{"mergeable":"MERGEABLE","mergeStateStatus":"CLEAN"}
+```
+
+**Result:** the protections are active on `main`, and the owner can still merge
+pull requests. Code-owner review and most-recent-push approval are off, because
+GitHub does not let authors approve their own pull requests and there is only
+one maintainer. Turn them back on, together with one required approval, when a
+second maintainer joins.

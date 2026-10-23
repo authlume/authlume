@@ -1,10 +1,11 @@
 # GitHub organization and repository settings
 
 These are **recommendations** for the project owner. Changing organization and
-repository settings requires owner approval. With that approval, an AI agent
-created the repository and made it public on 2026-10-23. It has applied none of
-the other settings below. Settings marked "observed" were read from the GitHub
-API on 2026-10-23 (see the [P0 evidence log](p0-verification.md)).
+repository settings requires owner approval. On 2026-10-23, with that approval,
+an AI agent created the repository, made it public, and applied the repository
+security settings and the `main` ruleset marked **Applied** below. It has not
+changed any organization settings. Settings marked "observed" were read from
+the GitHub API on 2026-10-23 (see the [P0 evidence log](p0-verification.md)).
 
 ## Plan constraint: public or private
 
@@ -17,10 +18,8 @@ plan:
 
 The repository was created private, then made **public** on 2026-10-23 after
 the owner registered `authlume.org`. All the controls below are therefore
-available on the Free plan. They take effect only once they are turned on.
-Observed at 2026-10-23T09:11Z: private vulnerability reporting off; secret
-scanning, push protection and Dependabot security updates disabled; no
-rulesets.
+available on the Free plan. The repository security settings and the `main`
+ruleset were applied at 2026-10-23T09:15Z.
 
 ## Organization settings
 
@@ -58,29 +57,32 @@ rulesets.
 
 ### Branch and tag rulesets
 
-Ruleset for the default branch `main`:
+Ruleset for the default branch `main`. **Applied** 2026-10-23 as ruleset
+`main` (ID 25710980) in single-maintainer mode.
 
 > [!IMPORTANT]
 > GitHub does not let pull request authors approve their own pull requests.
-> While `@9jaDevo` is the only maintainer, a rule requiring one code-owner
-> approval would block every maintainer pull request, including the P0 pull
-> request. Until a second maintainer with write access exists, set required
-> approvals to **0** and keep every other rule below. Raise it to 1 when the
-> second maintainer joins, and record the change in the Phase Tracker.
+> While `@9jaDevo` is the only maintainer, any rule that needs another
+> person's approval would block every maintainer pull request, including the
+> P0 pull request. Three rules are therefore off for now: required approvals
+> are set to **0**, and code-owner review and most-recent-push approval are
+> turned off. When a second maintainer with write access joins, turn all three
+> on and record the change in the Phase Tracker.
 
-- Require a pull request before merging.
-  - Required approvals: 1 (0 while there is a single maintainer, as above).
-  - Require review from code owners.
-  - Dismiss stale approvals when new commits are pushed.
+- Require a pull request before merging. *(Applied)*
+  - Required approvals: 1. *(Currently 0: single maintainer)*
+  - Require review from code owners. *(Currently off: single maintainer)*
+  - Dismiss stale approvals when new commits are pushed. *(Applied)*
   - Require approval of the most recent push by someone other than its author.
-  - Require conversation resolution.
-- Block force pushes.
-- Restrict deletions.
-- Require linear history.
+    *(Currently off: single maintainer)*
+  - Require conversation resolution. *(Applied)*
+- Block force pushes. *(Applied)*
+- Restrict deletions. *(Applied)*
+- Require linear history. *(Applied)*
 - Require status checks to pass. Add them in P2 once CI exists: format, lint,
   typecheck, tests, build, package boundary tests and dependency scans.
 - Bypass list: empty. Leave the bypass list empty, including for the owner,
-  except for a documented emergency procedure.
+  except for a documented emergency procedure. *(Applied: empty)*
 - Commit sign-off or signing: as decided in
   [ADR-009](../adr/0009-repository-and-release-process.md).
 
@@ -90,10 +92,12 @@ Ruleset for release tags (from P9): restrict creation, update and deletion of
 ### Security
 
 - Private vulnerability reporting: **on**. `SECURITY.md` depends on it.
+  *(Applied)*
 - Dependency graph, Dependabot alerts and Dependabot security updates: on.
+  *(Applied; the dependency graph is always on for public repositories)*
 - Dependabot version updates: add `.github/dependabot.yml` in P2, when there
   are dependencies and workflows to update.
-- Secret scanning and push protection: on.
+- Secret scanning and push protection: on. *(Applied)*
 - Code scanning (CodeQL default setup): on from P2, once there is code.
 
 ### GitHub Actions (from P2)
@@ -129,7 +133,13 @@ the issue forms. Also recommended: `needs-triage`, `security`, `adr`,
 - [ ] Restrict repository deletion, visibility changes and outside
       collaborator invitations to owners.
 - [ ] Turn on security features for new repositories.
-- [ ] Turn on private vulnerability reporting on the repository.
-- [ ] Create the `main` ruleset.
-- [ ] Set the description and topics.
+- [x] Turn on private vulnerability reporting, secret scanning, push
+      protection, Dependabot alerts and Dependabot security updates on the
+      repository (done 2026-10-23 with owner authorization).
+- [x] Create the `main` ruleset in single-maintainer mode (done 2026-10-23
+      with owner authorization).
+- [ ] When a second maintainer joins: set required approvals to 1, and turn
+      on code-owner review and most-recent-push approval.
+- [x] Set the description (done when the repository was created).
+- [ ] Set the topics.
 - [ ] Record each completed item, with evidence, in the Phase Tracker.
